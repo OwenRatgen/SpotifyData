@@ -4,8 +4,8 @@ const request = require('request');
 const app = express();
 
 // Set up application credentials
-const clientId = 'c4f0958cbf0741fcaa7dc824e1aca38a';
-const clientSecret = 'edd99fffb1ea4007a1e1764060544774';
+const clientId = 'client_id';
+const clientSecret = 'client_secret';
 
 // Send homepage to the user
 app.get('/', (req, res) => {
