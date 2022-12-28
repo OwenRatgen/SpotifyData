@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require('./my-app/node_modules/@types/express');
 const request = require('request');
 
 const app = express();
