@@ -4,6 +4,7 @@ var querystring = require('querystring');
 var path = require('path');
 const pug = require('pug');
 
+const artist_count = 15;
 
 
 const app = express();
@@ -80,6 +81,7 @@ app.get('/done', (req, res) => {
 function getTopArtists(accessToken) {
     var topArtists = {
         url: 'https://api.spotify.com/v1/me/top/artists',
+        qs: { limit: artist_count },
         headers: {
             'Authorization': 'Bearer ' + accessToken
         },
