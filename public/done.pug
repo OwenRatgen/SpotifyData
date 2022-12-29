@@ -1,0 +1,35 @@
+doctype html
+html
+  head
+    title="User Profile"
+    style.
+      .row {
+        display: flex;
+      }
+      .column {
+        width : 100%;
+        background-color: lightgrey;
+      }
+  body
+    h1= "Your Profile"
+    .row
+      div
+        h1 Top Artists, Genres, and Songs
+        .column
+          h2 Artists
+          ul
+            each artist in artists
+              li= artist
+
+        .column
+          h2 Genres
+          ul
+            each genre in genres
+              li= genre
+        
+        .column
+          h2 Songs
+          ul
+            each song in songs
+              li= song
+
