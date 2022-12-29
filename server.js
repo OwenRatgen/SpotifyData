@@ -5,6 +5,13 @@ var path = require('path');
 const pug = require('pug');
 
 const artist_count = 15;
+const song_count = 15;
+const genre_count = 10;
+
+const artists = [];
+const songs = [];
+const uncompleteGenres = [];
+const genres = [];
 
 
 const app = express();
@@ -18,7 +25,7 @@ var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
 var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
-const artists = [];
+
 
 // Send homepage to the user
 app.get('/', (req, res) => {
@@ -61,19 +68,33 @@ app.get('/callback', (req, res) => {
         var accessToken = body.access_token;
         console.log(`Access token: ${accessToken}`);
         getTopArtists(accessToken);
-        res.redirect('/done');
-      });
+        sleep(200).then(() => {
+        getTopGenres(accessToken);
+        sleep(200).then(() => {
+        getTopSongs(accessToken);
+        sleep(200).then(() => {
+          if (artists.length == 0 || songs.length == 0 || genres.length == 0){
+            sleep(1000).then(() => {
+              res.redirect('/done');
+            });
+          }
+          else{
+          res.redirect('/done');
+          }
+        });
+        });
+        });
+});
 });
 
+async function sleep(ms) {
+
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 app.get('/done', (req, res) => {
-  // Change this to render a react page instead of a pug page then no refresh needed
-    if (artists.length == 0){
-        res.redirect('/done');
-    }
-    else{
-    res.render('done', {artists: artists});
-    }
+  //TODO: Change this to render a react page instead of a pug page then no refresh needed
+  res.render('done', {artists: artists, songs: songs, genres: genres});
 });
 
 
@@ -97,12 +118,71 @@ function getTopArtists(accessToken) {
         } else {
             // Print the top artists
             var out = body.items;
+            //console.log("Artists:");
             for (var i = 0; i < out.length; i++){
-                console.log(out[i].name);
+                //console.log(out[i].name);
                 artists.push(out[i].name);
+                uncompleteGenres.push(out[i].genres);
             }
         }
     });
+  }
+
+
+function getTopSongs(accessToken) {
+  var topSongs = {
+      url: 'https://api.spotify.com/v1/me/top/tracks',
+      qs: { limit: song_count },
+      headers: {
+          'Authorization': 'Bearer ' + accessToken
+      },
+      json: true
+  };
+
+  request.get(topSongs, function(error, response, body) {
+      if (error) {
+          console.log(error);
+      } else if (typeof body === 'undefined' || !body.hasOwnProperty('items')) {
+          console.log('Error: Invalid response body');
+          console.log(body);
+      } else {
+          // Print the top artists
+          var out = body.items;
+          //console.log("Songs:");
+          for (var i = 0; i < out.length; i++){
+              //console.log(out[i].name);
+              songs.push(out[i].name);
+          }
+      }
+  });
+}
+
+function getTopGenres(accessToken) {
+  
+  //Make a hashmap that counts the number of times each genre appears
+  var genreMap = new Map();
+  for (var i = 0; i < uncompleteGenres.length; i++) {
+    for (var j = 0; j < uncompleteGenres[i].length; j++) {
+      if (genreMap.has(uncompleteGenres[i][j])) {
+        genreMap.set(uncompleteGenres[i][j], genreMap.get(uncompleteGenres[i][j]) + 1);
+      } else {
+        genreMap.set(uncompleteGenres[i][j], 1);
+      }
+    }
+  }
+  
+  //Sort the genres by number of times they appear and list the top genre_count genres
+  var sortedGenres = new Map([...genreMap.entries()].sort((a, b) => b[1] - a[1]));
+  var i = 0;
+  for (var [key, value] of sortedGenres) {
+    if (i < genre_count) {
+      //console.log(key)
+      genres.push(key);
+      i++;
+    } else {
+      break;
+    }
+  }
 }
 
 
