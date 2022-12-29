@@ -13,6 +13,8 @@ const songs = [];
 const uncompleteGenres = [];
 const genres = [];
 
+var term = "short_term";
+
 
 const app = express();
 const port = 3000;
@@ -102,7 +104,9 @@ app.get('/done', (req, res) => {
 function getTopArtists(accessToken) {
     var topArtists = {
         url: 'https://api.spotify.com/v1/me/top/artists',
-        qs: { limit: artist_count },
+        qs: { limit: artist_count,
+              time_range: term
+            },
         headers: {
             'Authorization': 'Bearer ' + accessToken
         },
@@ -132,7 +136,9 @@ function getTopArtists(accessToken) {
 function getTopSongs(accessToken) {
   var topSongs = {
       url: 'https://api.spotify.com/v1/me/top/tracks',
-      qs: { limit: song_count },
+      qs: { limit: song_count,
+            time_range: term
+          },
       headers: {
           'Authorization': 'Bearer ' + accessToken
       },

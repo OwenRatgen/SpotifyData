@@ -2,6 +2,7 @@ doctype html
 html
   head
     title="User Profile"
+    link(rel="stylesheet" href="done.css")
     style.
       .row {
         display: flex;
@@ -14,6 +15,13 @@ html
     h1= "Your Profile"
     .row
       div
+        title Last Month Button 
+        a.btn(href='#') Last Month
+        title Last 6 Months Button
+        a.btn(href='#') Last 6 Months
+        title All Time Button
+        a.btn(href='#') All Time
+
         h1 Top Artists, Genres, and Songs
         .column
           h2 Artists
