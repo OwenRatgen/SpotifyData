@@ -6,7 +6,7 @@ const pug = require('pug');
 
 const artist_count = 15;
 const song_count = 15;
-const genre_count = 10;
+const genre_count = 2;
 
 const artists = [];
 const songs = [];
@@ -70,29 +70,29 @@ app.get('/callback', (req, res) => {
         var accessToken = body.access_token;
         console.log(`Access token: ${accessToken}`);
         getTopArtists(accessToken);
-        sleep(200).then(() => {
-        getTopGenres(accessToken);
-        sleep(200).then(() => {
         getTopSongs(accessToken);
-        sleep(200).then(() => {
-          if (artists.length == 0 || songs.length == 0 || genres.length == 0){
-            sleep(1000).then(() => {
-              res.redirect('/done');
-            });
-          }
-          else{
+        checkArtists(100).then(() => {
+          getTopGenres(accessToken);
+        });
+        checkAll(100).then(() => {
           res.redirect('/done');
-          }
         });
-        });
-        });
-});
+      });
 });
 
-async function sleep(ms) {
-
-    return new Promise(resolve => setTimeout(resolve, ms));
+async function checkAll(ms) {
+  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0) {
+    await new Promise(resolve => setTimeout(resolve, ms));
+  }
 }
+
+async function checkArtists(ms) {
+  while (artists.length == 0) {
+    await new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
