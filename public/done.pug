@@ -1,16 +1,9 @@
 doctype html
 html
   head
+    head
     title="User Profile"
     link(rel="stylesheet" href="done.css")
-    style.
-      .row {
-        display: flex;
-      }
-      .column {
-        width : 100%;
-        background-color: lightgrey;
-      }
   body
     h1= "Your Profile"
     .row
@@ -41,3 +34,8 @@ html
             each song in songs
               li= song
 
+    #like_button_container
+    pre
+      | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+      | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+      | <script src="like_button.js"></script>

@@ -1,15 +1,23 @@
 .btn{
-  background-color: #000000;
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  margin: 10px;
-  /* position: absolute; */
-  /* left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%); */
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 20px;
-}
+    background-color: #000000;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    margin: 10px;
+    /* position: absolute; */
+    /* left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+  }
+
+.row {
+    display: flex;
+  }
+ .column {
+    width : 100%;
+    background-color: lightgrey;
+  }
