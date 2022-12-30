@@ -12,6 +12,7 @@ const artists = [];
 const songs = [];
 const uncompleteGenres = [];
 const genres = [];
+var basicScore = 0;
 
 var term = "short_term";
 
@@ -68,7 +69,7 @@ app.get('/callback', (req, res) => {
 
       request.post(authOptions, function(error, response, body) {
         var accessToken = body.access_token;
-        console.log(`Access token: ${accessToken}`);
+        //console.log(`Access token: ${accessToken}`);
         getTopArtists(accessToken);
         getTopSongs(accessToken);
         checkArtists(100).then(() => {
@@ -96,7 +97,7 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres});
+  res.render('done', {artists: artists, songs: songs, genres: genres, score: basicScore});
 });
 
 
@@ -105,6 +106,7 @@ function getTopArtists(accessToken) {
     var topArtists = {
         url: 'https://api.spotify.com/v1/me/top/artists',
         qs: { 
+            limit: 100, //the number of artists we're using to calculate popscore and genres
               time_range: term
             },
         headers: {
@@ -129,7 +131,11 @@ function getTopArtists(accessToken) {
                   artists.push(out[i].name);
                 }
                 uncompleteGenres.push(out[i].genres);
+                console.log(out[i].popularity)
+                basicScore += out[i].popularity;
             }
+            basicScore = basicScore / uncompleteGenres.length;
+            basicScore = Math.round(basicScore);
         }
     });
   }
