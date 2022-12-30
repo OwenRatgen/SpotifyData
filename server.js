@@ -6,7 +6,7 @@ const pug = require('pug');
 
 const artist_count = 15;
 const song_count = 15;
-const genre_count = 2;
+const genre_count = 5;
 
 const artists = [];
 const songs = [];
@@ -104,7 +104,7 @@ app.get('/done', (req, res) => {
 function getTopArtists(accessToken) {
     var topArtists = {
         url: 'https://api.spotify.com/v1/me/top/artists',
-        qs: { limit: artist_count,
+        qs: { 
               time_range: term
             },
         headers: {
@@ -125,12 +125,16 @@ function getTopArtists(accessToken) {
             //console.log("Artists:");
             for (var i = 0; i < out.length; i++){
                 //console.log(out[i].name);
-                artists.push(out[i].name);
+                if (i < artist_count) {
+                  artists.push(out[i].name);
+                }
                 uncompleteGenres.push(out[i].genres);
             }
         }
     });
   }
+
+
 
 
 function getTopSongs(accessToken) {
