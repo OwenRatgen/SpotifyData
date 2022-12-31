@@ -12,6 +12,7 @@ const artists = [];
 const songs = [];
 const uncompleteGenres = [];
 const genres = [];
+const genreFreq = [];
 var basicScore = 0;
 
 var term = "short_term";
@@ -21,6 +22,8 @@ const app = express();
 const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'node_modules')));
+
 app.set('view engine', 'pug');
 app.set('views', './public');
 
@@ -97,7 +100,7 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres, score: basicScore});
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore});
 });
 
 
@@ -131,7 +134,6 @@ function getTopArtists(accessToken) {
                   artists.push(out[i].name);
                 }
                 uncompleteGenres.push(out[i].genres);
-                console.log(out[i].popularity)
                 basicScore += out[i].popularity;
             }
             basicScore = basicScore / uncompleteGenres.length;
@@ -194,6 +196,7 @@ function getTopGenres(accessToken) {
     if (i < genre_count) {
       //console.log(key)
       genres.push(key);
+      genreFreq.push(value);
       i++;
     } else {
       break;
