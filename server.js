@@ -202,6 +202,10 @@ function getTopGenres(accessToken) {
       break;
     }
   }
+  //capitalize the first letter of each word in each genre
+  for (var i = 0; i < genres.length; i++) {
+    genres[i] = genres[i].replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+}
 }
 
 
