@@ -14,6 +14,7 @@ const uncompleteGenres = [];
 const genres = [];
 const genreFreq = [];
 var basicScore = 0;
+const names = [];
 
 var term = "short_term";
 
@@ -73,6 +74,7 @@ app.get('/callback', (req, res) => {
       request.post(authOptions, function(error, response, body) {
         var accessToken = body.access_token;
         //console.log(`Access token: ${accessToken}`);
+        getName(accessToken);
         getTopArtists(accessToken);
         getTopSongs(accessToken);
         checkArtists(100).then(() => {
@@ -85,7 +87,7 @@ app.get('/callback', (req, res) => {
 });
 
 async function checkAll(ms) {
-  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0) {
+  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0) {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 }
@@ -100,10 +102,31 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore});
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0]});
 });
 
 
+function getName(accessToken) {
+  var name = {
+      url: 'https://api.spotify.com/v1/me',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken
+      },
+      json: true
+  };
+  request.get(name, function(error, response, body) {
+    if (error) {
+      console.log(error);
+    } else if (typeof body === 'undefined' || !body.hasOwnProperty('display_name')) {
+      console.log('Error: Invalid response body');
+      console.log(body);
+    } else {
+      // Print the name
+      names.push(body.display_name)
+      console.log(`Name: ${name}`);
+    }
+  });
+}
 
 function getTopArtists(accessToken) {
     var topArtists = {
@@ -141,9 +164,6 @@ function getTopArtists(accessToken) {
         }
     });
   }
-
-
-
 
 function getTopSongs(accessToken) {
   var topSongs = {
