@@ -5,46 +5,45 @@ html
     title="User Profile"
     link(rel="stylesheet" href="done.css")
   body
-    h1= "Your Profile"
+    h1.title=name + "'s Profile"
     .row
-        title Last Month Button 
-        a.btn(href='#') Last Month
-        title Last 6 Months Button
-        a.btn(href='#') Last 6 Months
-        title All Time Button
-        a.btn(href='#') All Time
-    h1 Top Artists, Genres, and Songs
-    .row
-        
-        .column
-          h2 Artists
-          ul
-            each artist in artists
-              li= artist
-        
-        .column
-          h2 Songs
-          ul
-            each song in songs
-              li= song
-    .row
-      div
-        p Basic Score
-        p= score
-
-      div#pie_chart_label
-        p Genre Breakdown
-      div#pie_chart_container
-        ul#genres
-          each genre in genres
-            li= genre
-        ul#genreFreq 
-          each freq in genreFreq
-            li= freq
+      .column.button-column
+        h2 Time Frame
+        .btn-container
+          a.btn(href='#') Last Month
+          a.btn(href='#') Last 6 Months
+          a.btn(href='#') All Time
       
+      .column.artists
+        h2 Artists
+        ul
+          each artist in artists
+            li= artist
+      .column.songs
+        h2 Songs
+        ul
+          each song in songs
+            li= song
+      .column.right
+        h2 Scores
+        div.score
+          p Global Basic Score
+          p= score
+        h2 Genres
+        div#pie_chart_label
+          p Genre Breakdown
+        div#pie_chart_container
+          ul#genres
+            each genre in genres
+              li= genre
+          ul#genreFreq 
+            each freq in genreFreq
+              li= freq
     pre
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
       | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 
       | <script src="PieChart.js" defer></script>
+
+
 
