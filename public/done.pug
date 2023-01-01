@@ -13,12 +13,16 @@ html
           a.btn(href='#') Last Month
           a.btn(href='#') Last 6 Months
           a.btn(href='#') All Time
-      
+        h2 Artist Recommendations
+        ul
+          each artist in recArtists
+            li= artist
       .column.artists
         h2 Artists
         ul
           each artist in artists
             li= artist
+        
       .column.songs
         h2 Songs
         ul
