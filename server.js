@@ -5,16 +5,20 @@ var path = require('path');
 const pug = require('pug');
 
 const artist_count = 15;
+const rec_artist_count = 10;
 const song_count = 15;
 const genre_count = 5;
 
 const artists = [];
+const FullArtists = [];
 const songs = [];
 const uncompleteGenres = [];
 const genres = [];
 const genreFreq = [];
 var basicScore = 0;
 const names = [];
+const outRecArtists = [];
+const outRecSongs = [];
 
 var term = "short_term";
 
@@ -28,8 +32,8 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'SECRET_ID'; // Your secret
+var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
+var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
 
@@ -73,11 +77,11 @@ app.get('/callback', (req, res) => {
 
       request.post(authOptions, function(error, response, body) {
         var accessToken = body.access_token;
-        //console.log(`Access token: ${accessToken}`);
         getName(accessToken);
         getTopArtists(accessToken);
         getTopSongs(accessToken);
         checkArtists(100).then(() => {
+          recommendArtists(accessToken);
           getTopGenres(accessToken);
         });
         checkAll(100).then(() => {
@@ -87,7 +91,7 @@ app.get('/callback', (req, res) => {
 });
 
 async function checkAll(ms) {
-  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0) {
+  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0 || outRecArtists.length == 0) {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 }
@@ -102,7 +106,7 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0]});
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists});
 });
 
 
@@ -123,7 +127,6 @@ function getName(accessToken) {
     } else {
       // Print the name
       names.push(body.display_name)
-      console.log(`Name: ${name}`);
     }
   });
 }
@@ -150,11 +153,12 @@ function getTopArtists(accessToken) {
         } else {
             // Print the top artists
             var out = body.items;
-            //console.log("Artists:");
             for (var i = 0; i < out.length; i++){
-                //console.log(out[i].name);
                 if (i < artist_count) {
                   artists.push(out[i].name);
+                  FullArtists.push(out[i]);
+                   // you can get "more accurate" artist recommendations by filling FullArtists 
+                   //with more than artist_count artists but it increases load time by ~120%
                 }
                 uncompleteGenres.push(out[i].genres);
                 basicScore += out[i].popularity;
@@ -163,7 +167,77 @@ function getTopArtists(accessToken) {
             basicScore = Math.round(basicScore);
         }
     });
+}
+
+
+async function getArtistRecommendationsHelper(artistId, accessToken) {
+  const options = {
+    url: `https://api.spotify.com/v1/artists/${artistId}/related-artists`,
+    headers: {
+      'Authorization': `Bearer ${accessToken}`
+    },
+    json: true
+  };
+
+  return new Promise((resolve, reject) => {
+    request.get(options, function(error, response, body) {
+      if (error) {
+        console.log(error);
+        reject(error);
+      } else if (!body.hasOwnProperty('artists')) {
+        console.log('Error: Invalid response body');
+        console.log(body);
+        reject(new Error('Invalid response body'));
+      } else {
+        // return an array of the top 10 recommended artists
+        var num_recs_per_artist = 10;
+        var out = body.artists;
+        var recs = [];
+        for (var i = 0; i < num_recs_per_artist; i++) {
+          recs.push(out[i].name);
+        }
+        resolve(recs);
+      }
+    });
+  });
+}
+
+
+async function recommendArtists(accessToken) {
+  // use the complete artists array, weight the recommendations by len - index/len (so the first artist is weighted more)
+  var recArtists = {}
+
+  for (var i = 0; i < FullArtists.length; i++) {
+    var artist = FullArtists[i];
+    var id = artist.id;
+    // await the result of the helper function
+    var recs = await getArtistRecommendationsHelper(id, accessToken);
+
+    if (recs == null) {
+      continue;
+    }
+
+    for (var j = 0; j < recs.length; j++) {
+      var rec = recs[j];
+      if (rec in recArtists) {
+        recArtists[rec] += (FullArtists.length - i) / FullArtists.length;
+      } else {
+        recArtists[rec] = (FullArtists.length - i) / FullArtists.length;
+      }
+    }
   }
+
+  // sort the hashmap by value
+  var sortedRecs = Object.keys(recArtists).sort(function(a,b){return recArtists[b]-recArtists[a]});
+  
+  // return the top rec_artist_count
+  for (var i = 0; i < rec_artist_count; i++) {
+    if (!(sortedRecs[i] in FullArtists)) {
+      outRecArtists.push(sortedRecs[i]);
+    }
+  }
+}
+
 
 function getTopSongs(accessToken) {
   var topSongs = {
@@ -186,9 +260,7 @@ function getTopSongs(accessToken) {
       } else {
           // Print the top artists
           var out = body.items;
-          //console.log("Songs:");
           for (var i = 0; i < out.length; i++){
-              //console.log(out[i].name);
               songs.push(out[i].name);
           }
       }
@@ -214,7 +286,6 @@ function getTopGenres(accessToken) {
   var i = 0;
   for (var [key, value] of sortedGenres) {
     if (i < genre_count) {
-      //console.log(key)
       genres.push(key);
       genreFreq.push(value);
       i++;
