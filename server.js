@@ -32,8 +32,8 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
-var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
+var client_id = 'YOUR_CLIENT'; // Your client id
+var client_secret = 'YOUR_SECRET'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
 
