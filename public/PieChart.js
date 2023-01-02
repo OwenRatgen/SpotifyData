@@ -1,6 +1,9 @@
 'use strict';
 
 const e = React.createElement;
+const radius = 80;
+const width = 200;
+const height = width;
 
 class PieChart extends React.Component {
   constructor(props) {
@@ -32,18 +35,20 @@ class PieChart extends React.Component {
       ];
 
     const chartData = this.state.data.map((item, index) => {
-      const percentage = Math.round((item.score / totalScore) * 10000)/100;
+      const percentage = Math.round((item.score / totalScore) * 10000)/100; // round to 2 decimal places
       const angle = (percentage / 100) * 360;
       const endAngle = startAngle + angle;
 
-      const x1 = 50 + 40 * Math.cos(startAngle * Math.PI / 180);
-      const y1 = 50 + 40 * Math.sin(startAngle * Math.PI / 180);
-      const x2 = 50 + 40 * Math.cos(endAngle * Math.PI / 180);
-      const y2 = 50 + 40 * Math.sin(endAngle * Math.PI / 180);
+      
+
+      const x1 = width/2 + radius * Math.cos(startAngle * Math.PI / 180);
+      const y1 = height/2 + radius * Math.sin(startAngle * Math.PI / 180);
+      const x2 = width/2 + radius * Math.cos(endAngle * Math.PI / 180);
+      const y2 = width/2 + radius * Math.sin(endAngle * Math.PI / 180);
 
       const largeArcFlag = angle > 180 ? 1 : 0;
 
-      const pathData = `M 50,50 L ${x1},${y1} A 40,40 0 ${largeArcFlag},1 ${x2},${y2} Z`;
+      const pathData = `M ${width/2},${height/2} L ${x1},${y1} A ${radius},${radius} 0 ${largeArcFlag},1 ${x2},${y2} Z`;
 
       startAngle = endAngle;
 
@@ -60,7 +65,7 @@ class PieChart extends React.Component {
       {},
       e(
         'svg',
-        { width: '100', height: '100' },
+        { width: width, height: height },
         chartData.map(item => {
           return e(
             'path',
@@ -68,11 +73,11 @@ class PieChart extends React.Component {
               d: item.pathData,
               fill: item.color,
               stroke: 'black',
-              'strokeWidth': '3',
+              'strokeWidth': '1',
               'data-name': item.name,
               'data-value': item.value,
               onMouseOver: event => {
-                event.target.setAttribute('stroke-width', '6');
+                event.target.setAttribute('stroke-width', '3');
                 ReactDOM.render(
                   e(
                     'text',
@@ -84,7 +89,7 @@ class PieChart extends React.Component {
                 );
               },
               onMouseOut: event => {
-                event.target.setAttribute('stroke-width', '3');
+                event.target.setAttribute('stroke-width', '1');
                 ReactDOM.render(
                   e(
                     'text',
