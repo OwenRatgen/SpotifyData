@@ -1,84 +1,181 @@
-body {
-  font-family: sans-serif;
-  margin: 0;
-  padding: 0;
+@media (prefers-color-scheme: light) {
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  h1.title {
+    text-align: center;
+    font-size: 32px;
+    margin: 20px 0;
+  }
+
+  .row {
+    display: flex;
+    margin: 20px 0;
+  }
+
+  .column {
+    width: 50%;
+    padding: 1%;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+  }
+
+  .column.right {
+    width: 40%;
+    text-align: center;
+  }
+
+  .button-column {
+    width: 20%;
+    text-align: center;
+  }
+
+  .btn-container {
+    display: block;
+    margin: 10px 0;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid lightgray;
+    border-radius: 5px;
+    text-decoration: none;
+    color: black;
+    margin: 10px;
+  }
+
+  .btn:hover {
+    background-color: lightgray;
+    cursor: pointer;
+  }
+
+  h2 {
+    margin: 10px 0;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 5px 0;
+  }
+
+  pre {
+    display: none;
+  }
+
+  #pie_chart_label {
+    text-align: center;
+    size: 20px;
+  }
+
+  .artists, .songs {
+    width: 45%;
+  }
+
+  .score {
+    margin: 20px 0;
+  }
 }
 
-h1.title {
-  text-align: center;
-  font-size: 32px;
-  margin: 20px 0;
-}
-
-.row {
-  display: flex;
-  margin: 20px 0;
-}
-
-.column {
-  width: 50%;
-  padding: 1%;
-  border: 1px solid lightgray;
-  border-radius: 5px;
-}
-
-.column.right {
-  width: 40%;
-  text-align: center;
-}
-
-.button-column {
-  width: 20%;
-  text-align: center;
-}
-
-.btn-container {
-  display: block;
-  margin: 10px 0;
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 20px;
-  border: 1px solid lightgray;
-  border-radius: 5px;
-  text-decoration: none;
-  color: black;
-  margin: 10px;
-}
-
-.btn:hover {
-  background-color: lightgray;
-  cursor: pointer;
-}
-
-h2 {
-  margin: 10px 0;
-}
-
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-li {
-  margin: 5px 0;
-}
-
-pre {
-  display: none;
-}
-
-#pie_chart_label {
-  text-align: center;
-  size: 20px;
-}
-
-.artists, .songs {
-  width: 45%;
-}
-
-.score {
-  margin: 20px 0;
+@media (prefers-color-scheme: dark){
+  body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    color: #fff;
+  }
+  
+  h1.title {
+    text-align: center;
+    font-size: 32px;
+    margin: 20px 0;
+    color: #fff;
+  }
+  
+  .row {
+    display: flex;
+    margin: 20px 0;
+  }
+  
+  .column {
+    width: 50%;
+    padding: 1%;
+    border: 1px solid #333;
+    border-radius: 5px;
+  }
+  
+  .column.right {
+    width: 40%;
+    text-align: center;
+  }
+  
+  .button-column {
+    width: 20%;
+    text-align: center;
+  }
+  
+  .btn-container {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+    margin: 10px;
+    background-color: #222;
+  }
+  
+  .btn:hover {
+    background-color: #333;
+    cursor: pointer;
+  }
+  
+  h2 {
+    margin: 10px 0;
+    color: #fff;
+  }
+  
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  li {
+    margin: 5px 0;
+    color: #fff;
+  }
+  
+  pre {
+    display: none;
+  }
+  
+  #pie_chart_label {
+    text-align: center;
+    size: 20px;
+    color: #fff;
+  }
+  
+  .artists, .songs {
+    width: 45%;
+  }
+  
+  .score {
+    margin: 20px 0;
+    color: #fff;
+  }  
 }
