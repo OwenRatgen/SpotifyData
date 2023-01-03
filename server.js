@@ -10,7 +10,7 @@ const song_count = 15;
 const genre_count = 5;
 
 var artists = [];
-const FullArtists = [];
+var FullArtists = [];
 var songs = [];
 var uncompleteGenres = [];
 var genres = [];
@@ -70,6 +70,7 @@ app.get('/callback', (req, res) => {
     console.log("IN CALLBACK " + term + " " + needUpdate);
     if(needUpdate){
       artists = [];
+      FullArtists = [];
       songs = [];
       uncompleteGenres = [];
       genres = [];
@@ -141,6 +142,8 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+  // res.redirect('/medium');
+  // res.redirect('/long');
 });
 
 app.get('/short', (req, res) => {
@@ -245,6 +248,14 @@ function getTopArtistPicture(accessToken) {
         },
         json: true
     };
+    var optionsArtistAlbumPic = {
+        url: `https://api.spotify.com/v1/artists/${topID}/albums`,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        json: true
+    }
+    console.log(optionsArtistAlbumPic);
     request.get(optionsArtistPic, function(error, response, body) {
       if (error) {
           console.log(error);
