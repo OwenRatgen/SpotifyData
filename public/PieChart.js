@@ -18,37 +18,19 @@ class PieChart extends React.Component {
     for (var i = 0; i < names.length; i++) {
       this.state.data.push({name: names[i], score: scores[i]});
     }
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      // dark mode colors for the pie chart
-      this.colors = [
-        '#c61c1c',
-        '#2e7d32',
-        '#9b9b00',
-        '#1b4f72',
-        '#5e35b1',
-        '#00695c',
-        '#b01ba4',
-        '#7cb342',
-        '#b13e00',
-        '#ec9b9b'
-      ];
-    }
-    else
-    {
       // light mode colors for the pie chart
       this.colors = [
-        'red',
-        'orange',
-        'yellow',
-        'green',
-        'blue',
-        'indigo',
-        'violet',
-        'pink',
-        'purple',
-        'brown'
+        '#98ee99',
+        '#add8e6',
+        '#db7093',
+        '#ffa07a',
+        '#ff4500',
+        '#ffffe0',
+        '#fa8072',
+        '#ffa07a',
+        '#a52a2a',
+        '#ffa07a'
       ];
-    }
   }
 
   render() {
