@@ -1,9 +1,12 @@
 'use strict';
 
 const e = React.createElement;
-const radius = 80;
+const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+const radius = vh/8;
 const width = 200;
 const height = width;
+
 
 class PieChart extends React.Component {
   constructor(props) {
@@ -15,13 +18,25 @@ class PieChart extends React.Component {
     for (var i = 0; i < names.length; i++) {
       this.state.data.push({name: names[i], score: scores[i]});
     }
-  }
-
-  render() {
-    const totalScore = this.state.data.reduce((acc, item) => acc + item.score, 0);
-    let startAngle = 0;
-
-    const colors = [
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      // dark mode colors for the pie chart
+      this.colors = [
+        '#c61c1c',
+        '#2e7d32',
+        '#9b9b00',
+        '#1b4f72',
+        '#5e35b1',
+        '#00695c',
+        '#b01ba4',
+        '#7cb342',
+        '#b13e00',
+        '#ec9b9b'
+      ];
+    }
+    else
+    {
+      // light mode colors for the pie chart
+      this.colors = [
         'red',
         'orange',
         'yellow',
@@ -33,6 +48,14 @@ class PieChart extends React.Component {
         'purple',
         'brown'
       ];
+    }
+  }
+
+  render() {
+    const totalScore = this.state.data.reduce((acc, item) => acc + item.score, 0);
+    let startAngle = 0;
+
+    
 
     const chartData = this.state.data.map((item, index) => {
       const percentage = Math.round((item.score / totalScore) * 10000)/100; // round to 2 decimal places
@@ -51,12 +74,13 @@ class PieChart extends React.Component {
       const pathData = `M ${width/2},${height/2} L ${x1},${y1} A ${radius},${radius} 0 ${largeArcFlag},1 ${x2},${y2} Z`;
 
       startAngle = endAngle;
-
+      
+      
       return {
         name: item.name,
         value: percentage,
         pathData: pathData,
-        color: colors[index]
+        color: this.colors[index]
       };
     });
 

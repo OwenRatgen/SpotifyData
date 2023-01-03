@@ -1,181 +1,233 @@
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #222; /* change the background-color to a dark color */
+    color: #fff; /* change the text color to white */
+    position: fixed;
   }
-
+  
   h1.title {
     text-align: center;
     font-size: 32px;
     margin: 20px 0;
+    color: #fff; /* change the text color to white */
   }
-
+  
   .row {
     display: flex;
+  }
+  .row.main{
+    height: 42vh;
     margin: 20px 0;
   }
-
+  
+  h2 {
+    margin: 10px 0;
+    color: #fff; /* change the text color to white */
+    text-align: center;
+  }
+  
+  h3 {
+    font-size: 15px;
+    color: #fff; /* change the text color to white */
+    text-align: center;
+  }
+  
+  p.details{
+    text-align: center;
+    font-size: 10px;
+    color: #fff; /* change the text color to white */
+  }
   .column {
     width: 50%;
     padding: 1%;
-    border: 1px solid lightgray;
+    border: 1px solid #ccc;
     border-radius: 5px;
   }
-
-  .column.right {
-    width: 40%;
-    text-align: center;
+  
+  /*Top Left */
+  .topArtist {
+    height: 58vh;
+    width: 30.4vw;
   }
-
+  
+  /*Bottom Left */
+  .score {
+    position: relative;
+    top: 18vh;
+    width: 37.7vw;
+    height: 19.8vh;
+  }
+  
+  .song{
+    font-size: 15px;
+  }
+  
+  
+  /* Button Stuff */
   .button-column {
     width: 20%;
     text-align: center;
   }
-
-  .btn-container {
-    display: block;
-    margin: 10px 0;
-  }
-
   .btn {
     display: inline-block;
     padding: 10px 20px;
-    border: 1px solid lightgray;
+    border: 1px solid #fff; /* change the border color to white */
     border-radius: 5px;
     text-decoration: none;
-    color: black;
+    color: #fff; /* change the text color to white */
     margin: 10px;
+    background-color: #222; /* change the background-color to a dark color */
   }
-
   .btn:hover {
-    background-color: lightgray;
+    background-color: #333; /* change the background-color to a darker color */
     cursor: pointer;
   }
-
-  h2 {
-    margin: 10px 0;
+  
+  #pie_chart_container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 73vw;
+    top: 22vh;
   }
-
+  
   ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
   }
-
-  li {
-    margin: 5px 0;
-  }
-
-  pre {
-    display: none;
-  }
-
+  
   #pie_chart_label {
     text-align: center;
     size: 20px;
+    color: #fff; /* change the text color to white */
   }
-
-  .artists, .songs {
-    width: 45%;
+  
+  
+  
+  img {
+    max-width: 100%;
+    max-height: 80%;
+    border-radius: 50%;
   }
-
-  .score {
-    margin: 20px 0;
-  }
+  
 }
 
-@media (prefers-color-scheme: dark){
+@media (prefers-color-scheme: light) {
+
   body {
     font-family: sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #111;
-    color: #fff;
+    background-color: #f4f4f4;
+    color: #333;
+    position: fixed;
   }
-  
+
   h1.title {
     text-align: center;
     font-size: 32px;
     margin: 20px 0;
-    color: #fff;
+    color: #333;
   }
-  
+
   .row {
     display: flex;
+
+  }
+  .row.main{
+    height: 42vh;
     margin: 20px 0;
   }
-  
+
+  h2 {
+    margin: 10px 0;
+    color: #333;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 15px;
+    color: #333;
+    text-align: center;
+  }
+
+  p.details{
+    text-align: center;
+    font-size: 10px;
+    color: #333;
+  }
   .column {
     width: 50%;
     padding: 1%;
-    border: 1px solid #333;
+    border: 1px solid #ccc;
     border-radius: 5px;
   }
-  
-  .column.right {
-    width: 40%;
-    text-align: center;
+
+  /*Top Left */
+  .topArtist {
+    height: 58vh;
+    width: 30.4vw;
   }
-  
+
+  /*Bottom Left */
+  .score {
+    position: relative;
+    top: 18vh;
+    width: 37.7vw;
+    height: 19.8vh;
+  }
+
+  .song{
+    font-size: 15px;
+  }
+
+
+  /* Button Stuff */
   .button-column {
     width: 20%;
     text-align: center;
   }
-  
-  .btn-container {
-    display: block;
-    margin: 10px 0;
-  }
-  
   .btn {
     display: inline-block;
     padding: 10px 20px;
     border: 1px solid #333;
     border-radius: 5px;
     text-decoration: none;
-    color: #fff;
+    color: #333;
     margin: 10px;
-    background-color: #222;
+    background-color: #fff;
   }
-  
   .btn:hover {
-    background-color: #333;
+    background-color: #f4f4f4;
     cursor: pointer;
   }
-  
-  h2 {
-    margin: 10px 0;
-    color: #fff;
+
+  #pie_chart_container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 73vw;
+    top: 22vh;
   }
-  
+
   ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
   }
-  
-  li {
-    margin: 5px 0;
-    color: #fff;
-  }
-  
-  pre {
-    display: none;
-  }
-  
+
   #pie_chart_label {
     text-align: center;
     size: 20px;
-    color: #fff;
+    color: #333;
   }
-  
-  .artists, .songs {
-    width: 45%;
+
+
+
+  img {
+    max-width: 100%;
+    max-height: 80%;
+    border-radius: 50%;
   }
-  
-  .score {
-    margin: 20px 0;
-    color: #fff;
-  }  
+
 }

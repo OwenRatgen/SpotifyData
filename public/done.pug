@@ -6,34 +6,28 @@ html
     link(rel="stylesheet" href="done.css")
   body
     h1.title=name + "'s Profile"
-    .row
-      .column.button-column
-        h2 Time Frame
-        .btn-container
-          a.btn(id='last_month' onclick='myFunction()') Last Month
-          a.btn(id='last_six') Last 6 Months
-          a.btn(id='all_time') All Time
-        h2 Artist Recommendations
-        ul
-          each artist in recArtists
-            li= artist
-      .column.artists
+    .row.main
+      .column.topArtist
+        h2 Your Top Artist
+        img(src=topArtistPicURL)#topArtistPic
+        h2= artists[0]
+      .column.otherArtist
         h2 Artists
-        ul
-          each artist in artists
-            li= artist
-        
-      .column.songs
-        h2 Songs
-        ul
-          each song in songs
-            li= song
-      .column.right
-        h2 Scores
-        div.score
-          p Global Basic Score
-          p= score
-        h2 Genres
+        .row
+          .column
+            ul.artists
+              each artist,element in artists
+                if element != 0
+                  if element < artists.length/2
+                    li= artist
+          .column
+            ul.artists
+              each artist,element in artists
+                  if element != 0
+                    if element >= artists.length/2
+                      li= artist
+      .column.genres
+        h2 Your Top Genres
         div#pie_chart_label
           p Genre Breakdown
         div#pie_chart_container
@@ -43,13 +37,50 @@ html
           ul#genreFreq 
             each freq in genreFreq
               li= freq
+      
+    .row.main
+      .column.score
+        h2 Scores
+        .row
+          .column
+            h3= '"Basic" Score: '+score
+            p.details A higher score means you have a more "basic" music taste.
+          .column
+            h3= 'Variety Score: '+varietyScore
+            p.details A higher score means you have a more varied music taste.
+      .column.songs
+        h2 Songs
+        .row
+          .column
+            ul
+              each song,element in songs
+                if element < songs.length/2
+                  li.song= song
+          .column
+            ul
+              each song,element in songs
+                if element >= songs.length/2
+                  li.song= song
+      .column
+        h2 Recommended Artists (Placeholder)
+        ul
+          each artist in recArtists
+            li= artist
+      .column.button-column
+        h2 Time Frame
+        .btn-container
+          a.btn(id='last_month' onclick='myFunction()') Last Month
+          a.btn(id='last_six') Last 6 Months
+          a.btn(id='all_time') All Time
+      
     pre
+
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
       | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-
       | <script src="buttons.js" defer></script>
-      | <script src="server.js" defer></script>
       | <script src="PieChart.js" defer></script>
+    
+      | <script> window.addEventListener('resize', function () {window.location.reload();}) </script>
 
 
 
