@@ -21,8 +21,9 @@ const names = [];
 var outRecArtists = [];
 var topArtistPicURL = [];
 
-var term = "short_term";
+var needUpdate = true;
 
+var term = "medium_term";
 
 
 const app = express();
@@ -66,8 +67,19 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', (req, res) => {
-    console.log("IN CALLBACK");
-
+    console.log("IN CALLBACK " + term + " " + needUpdate);
+    if(needUpdate){
+      artists = [];
+      songs = [];
+      uncompleteGenres = [];
+      genres = [];
+      genreFreq = [];
+      basicScore = 0;
+      varietyScore = 0;
+      outRecArtists = [];
+      topArtistPicURL = [];
+      needUpdate = false;
+    }
     // User's authorization code
     var code = req.query.code;
 
@@ -86,6 +98,7 @@ app.get('/callback', (req, res) => {
 
       request.post(authOptions, function(error, response, body) {
         var accessToken = body.access_token;
+        
         if (names.length == 0){
           getName(accessToken);
         }
@@ -107,7 +120,7 @@ app.get('/callback', (req, res) => {
           }
         });
         checkAll(100).then(() => {
-          res.redirect('/done')
+          res.redirect('/done');
         });
       });
 });
@@ -127,36 +140,41 @@ async function checkArtists(ms) {
 
 
 app.get('/done', (req, res) => {
-  console.log(artists);
-  //TODO: Change this to render a react page instead of a pug page then no refresh needed
-    res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
-    artists = [];
-    songs = [];
-    uncompleteGenres = [];
-    genres = [];
-    genreFreq = [];
-    basicScore = 0;
-    varietyScore = 0;
-    outRecArtists = [];
-    topArtistPicURL = [];
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
 });
 
 app.get('/short', (req, res) => {
-  term = "short_term";
+  if (term == "short_term") {
+    needUpdate = false;
+  }
+  else{
+    needUpdate = true;
+    term = "short_term";
+  }
   res.redirect('/login');
-  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
 });
 
+
 app.get('/medium', (req, res) => {
-  term = "medium_term";
+  if (term == "medium_term") {
+    needUpdate = false;
+  }
+  else{
+    needUpdate = true;
+    term = "medium_term";
+  }
   res.redirect('/login');
-  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
 });
 
 app.get('/long', (req, res) => {
-  term = "long_term";
+  if (term == "long_term") {
+    needUpdate = false;
+  }
+  else{
+    needUpdate = true;
+    term = "long_term";
+  }
   res.redirect('/login');
-  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
 });
 
 function getName(accessToken) {
