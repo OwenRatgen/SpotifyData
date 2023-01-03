@@ -69,15 +69,15 @@ html
       .column.button-column
         h2 Time Frame
         .btn-container
-          a.btn(id='last_month' onclick='myFunction()') Last Month
-          a.btn(id='last_six') Last 6 Months
-          a.btn(id='all_time') All Time
+          a.btn(href='/short' id='last_month') Last Month
+          a.btn(href='/medium' id='last_six') Last 6 Months
+          a.btn(href='/long' id='all_time') All Time
       
     pre
 
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
       | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-      | <script src="buttons.js" defer></script>
+      | <script src="server.js" defer></script>
       | <script src="PieChart.js" defer></script>
     
       | <script> window.addEventListener('resize', function () {window.location.reload();}) </script>

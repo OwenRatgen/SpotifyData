@@ -9,19 +9,20 @@ const rec_artist_count = 10;
 const song_count = 15;
 const genre_count = 5;
 
-const artists = [];
+var artists = [];
 const FullArtists = [];
-const songs = [];
-const uncompleteGenres = [];
-const genres = [];
-const genreFreq = [];
+var songs = [];
+var uncompleteGenres = [];
+var genres = [];
+var genreFreq = [];
 var basicScore = 0;
 var varietyScore = 0;
 const names = [];
-const outRecArtists = [];
-const topArtistPicURL = [];
+var outRecArtists = [];
+var topArtistPicURL = [];
 
 var term = "short_term";
+
 
 
 const app = express();
@@ -33,8 +34,8 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'YOUR_CLIENT'; // Your client id
-var client_secret = 'YOUR_SECRET'; // Your secret
+var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
+var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
 const standardDeviation = (arr, usePopulation = false) => {
@@ -65,6 +66,7 @@ app.get('/login', function(req, res) {
 });
 
 app.get('/callback', (req, res) => {
+    console.log("IN CALLBACK");
 
     // User's authorization code
     var code = req.query.code;
@@ -105,7 +107,7 @@ app.get('/callback', (req, res) => {
           }
         });
         checkAll(100).then(() => {
-          res.redirect('/done');
+          res.redirect('/done')
         });
       });
 });
@@ -125,10 +127,37 @@ async function checkArtists(ms) {
 
 
 app.get('/done', (req, res) => {
+  console.log(artists);
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+    res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+    artists = [];
+    songs = [];
+    uncompleteGenres = [];
+    genres = [];
+    genreFreq = [];
+    basicScore = 0;
+    varietyScore = 0;
+    outRecArtists = [];
+    topArtistPicURL = [];
 });
 
+app.get('/short', (req, res) => {
+  term = "short_term";
+  res.redirect('/login');
+  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+});
+
+app.get('/medium', (req, res) => {
+  term = "medium_term";
+  res.redirect('/login');
+  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+});
+
+app.get('/long', (req, res) => {
+  term = "long_term";
+  res.redirect('/login');
+  // res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+});
 
 function getName(accessToken) {
   var name = {
