@@ -16,9 +16,10 @@ const uncompleteGenres = [];
 const genres = [];
 const genreFreq = [];
 var basicScore = 0;
+var varietyScore = 0;
 const names = [];
 const outRecArtists = [];
-const outRecSongs = [];
+const topArtistPicURL = [];
 
 var term = "short_term";
 
@@ -32,11 +33,17 @@ app.use(express.static(path.join(__dirname, 'node_modules')));
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id // Your client id
-var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
+var client_id = 'YOUR_CLIENT'; // Your client id
+var client_secret = 'YOUR_SECRET'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
-
+const standardDeviation = (arr, usePopulation = false) => {
+  const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
+  return Math.sqrt(
+    arr.reduce((acc, val) => acc.concat((val - mean) ** 2), []).reduce((acc, val) => acc + val, 0) /
+      (arr.length - (usePopulation ? 0 : 1))
+  );
+};
 
 // Send homepage to the user
 app.get('/', (req, res) => {
@@ -77,12 +84,25 @@ app.get('/callback', (req, res) => {
 
       request.post(authOptions, function(error, response, body) {
         var accessToken = body.access_token;
-        getName(accessToken);
-        getTopArtists(accessToken);
-        getTopSongs(accessToken);
+        if (names.length == 0){
+          getName(accessToken);
+        }
+        if (artists.length == 0 ){
+          getTopArtists(accessToken);
+        }
+        if (songs.length == 0){
+          getTopSongs(accessToken);
+        }
         checkArtists(100).then(() => {
-          recommendArtists(accessToken);
-          getTopGenres(accessToken);
+          if(genres.length != genre_count){
+            getTopGenres(accessToken);
+          }
+          if (outRecArtists.length == 0){
+            recommendArtists(accessToken);
+          }
+          if (topArtistPicURL.length == 0){
+            getTopArtistPicture(accessToken);
+          }
         });
         checkAll(100).then(() => {
           res.redirect('/done');
@@ -91,7 +111,7 @@ app.get('/callback', (req, res) => {
 });
 
 async function checkAll(ms) {
-  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0 || outRecArtists.length == 0) {
+  while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0 || outRecArtists.length == 0 || topArtistPicURL.length == 0) {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 }
@@ -106,7 +126,7 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   //TODO: Change this to render a react page instead of a pug page then no refresh needed
-  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists});
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
 });
 
 
@@ -169,6 +189,27 @@ function getTopArtists(accessToken) {
     });
 }
 
+function getTopArtistPicture(accessToken) {
+    const topID = FullArtists[0].id;
+    var optionsArtistPic = {
+        url: `https://api.spotify.com/v1/artists/${topID}/`,
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        },
+        json: true
+    };
+    request.get(optionsArtistPic, function(error, response, body) {
+      if (error) {
+          console.log(error);
+      } else if (typeof body === 'undefined') {
+          console.log('Error: Invalid response body');
+          console.log(body);
+      } else {
+          // Print the top artists
+          topArtistPicURL.push(body.images[0].url);
+      }
+  });
+}
 
 async function getArtistRecommendationsHelper(artistId, accessToken) {
   const options = {
@@ -283,7 +324,23 @@ function getTopGenres(accessToken) {
   
   //Sort the genres by number of times they appear and list the top genre_count genres
   var sortedGenres = new Map([...genreMap.entries()].sort((a, b) => b[1] - a[1]));
+
+  var freqs = [];
   var i = 0;
+  for (var [key, value] of sortedGenres) {
+    if (i < 10) {
+       // change this value to change the number of genres used to calculate the variety score
+       freqs.push(value);
+    }
+    else{
+      break;
+    }
+    i++;
+  }
+  varietyScore += standardDeviation(freqs);
+  varietyScore *= 5; // scale the variety score to be roughly between 0 and 100
+  varietyScore = Math.round(varietyScore); //round it to the nearest integer
+  i = 0;
   for (var [key, value] of sortedGenres) {
     if (i < genre_count) {
       genres.push(key);
@@ -298,6 +355,7 @@ function getTopGenres(accessToken) {
     genres[i] = genres[i].replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 }
 }
+
 
 // Establishes connection between code and web server
 app.listen(3000, () => {
