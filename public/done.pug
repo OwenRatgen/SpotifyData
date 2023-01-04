@@ -5,13 +5,14 @@ html
     title=name + "'s Profile"
     link(rel="stylesheet" href="done.css")
   body
-    img(src= topArtistPicURL, style="display:none")#TopArtistPic
     h1.title=name + "'s Profile"
+    img(src= topArtistPicURL, style="display:none" crossOrigin="anonymous")#TopArtistPic
     p(style="display:none")#nameData=name
+    h2(style="display:none")#topArtistText= artists[0]
     .row.main
       .column.outputImage
-        canvas(width="300" height="400")#outImage
-        h2(style="display:none")#topArtistText= artists[0]
+        canvas(width="280" height="400" style="display:none")#outImage
+        img#outImage2
       .column.otherArtist
         h2 Artists
         .row
