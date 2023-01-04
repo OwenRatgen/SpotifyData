@@ -5,23 +5,24 @@ html
     title=name + "'s Profile"
     link(rel="stylesheet" href="done.css")
   body
+    img(src= topArtistPicURL, style="display:none")#TopArtistPic
     h1.title=name + "'s Profile"
+    p(style="display:none")#nameData=name
     .row.main
-      .column.topArtist
-        h2 Your Top Artist
-        img(src=topArtistPicURL)#topArtistPic
-        h2= artists[0]
+      .column.outputImage
+        canvas(width="300" height="400")#outImage
+        h2(style="display:none")#topArtistText= artists[0]
       .column.otherArtist
         h2 Artists
         .row
           .column
-            ul.artists
+            ul.artists#artistNamesA
               each artist,element in artists
                 if element != 0
                   if element < artists.length/2
                     li= artist
           .column
-            ul.artists
+            ul.artists#artistNamesB
               each artist,element in artists
                   if element != 0
                     if element >= artists.length/2
@@ -72,13 +73,14 @@ html
           a.btn(href='/short' id='last_month') Last Month
           a.btn(href='/medium' id='last_six') Last 6 Months
           a.btn(href='/long' id='all_time') All Time
-      
+    
     pre
 
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
       | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
       | <script src="PieChart.js" defer></script>
       | <script src="server.js" defer></script>
+      | <script src="imgMaker.js" defer></script>
     
       | <script> window.addEventListener('resize', function () {window.location.reload();}) </script>
 
