@@ -20,6 +20,7 @@ var varietyScore = 0;
 const names = [];
 var outRecArtists = [];
 var topArtistPicURL = [];
+var topArtistAlbumPicURL = [];
 
 var needUpdate = true;
 
@@ -126,11 +127,25 @@ app.get('/callback', (req, res) => {
       });
 });
 
+/**
+ * What does this function do?
+ *
+ * @param {int} ms What is this param for?
+ * @return {void}
+ */
+
 async function checkAll(ms) {
   while (artists.length == 0 || songs.length == 0 || uncompleteGenres.length == 0 || names.length == 0 || outRecArtists.length == 0 || topArtistPicURL.length == 0) {
     await new Promise(resolve => setTimeout(resolve, ms));
   }
 }
+
+/**
+ * What does this function do?
+ *
+ * @param {int} ms What is this param for?
+ * @return {void}
+ */
 
 async function checkArtists(ms) {
   while (artists.length == 0) {
@@ -142,9 +157,10 @@ async function checkArtists(ms) {
 
 app.get('/done', (req, res) => {
   res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
-  // res.redirect('/medium');
-  // res.redirect('/long');
 });
+
+// Depending on what button the user presses, it will send the user to another page where it will change
+// the term
 
 app.get('/short', (req, res) => {
   if (term == "short_term") {
@@ -180,6 +196,13 @@ app.get('/long', (req, res) => {
   res.redirect('/login');
 });
 
+/**
+ * What does this function do?
+ *
+ * @param {int} acessToken What is this param for?
+ * @return {void}
+ */
+
 function getName(accessToken) {
   var name = {
       url: 'https://api.spotify.com/v1/me',
@@ -200,6 +223,13 @@ function getName(accessToken) {
     }
   });
 }
+
+/**
+ * Gets the top artists a user listens to
+ *
+ * @param {str} accessToken Used to get the top artists
+ * @return {void} fills up a stack with a user's top artists
+ */
 
 function getTopArtists(accessToken) {
     var topArtists = {
@@ -239,6 +269,14 @@ function getTopArtists(accessToken) {
     });
 }
 
+/**
+ * Gets the number one artist a user listens to picture and most recent album cover art. Used for the
+ * webpage layout
+ *
+ * @param {str} accessToken Used to get the top artists' profile picture
+ * @return {void} fills up a stack with a user's top artists' profile picture
+ */
+
 function getTopArtistPicture(accessToken) {
     const topID = FullArtists[0].id;
     var optionsArtistPic = {
@@ -248,14 +286,16 @@ function getTopArtistPicture(accessToken) {
         },
         json: true
     };
-    var optionsArtistAlbumPic = {
-        url: `https://api.spotify.com/v1/artists/${topID}/albums`,
-        headers: {
-          'Authorization': `Bearer ${accessToken}`
-        },
-        json: true
-    }
-    console.log(optionsArtistAlbumPic);
+
+  //   var optionsArtistAlbumPic = {
+  //     url: `https://api.spotify.com/v1/artists/${topID}/albums`,
+  //     headers: {
+  //       'Authorization': `Bearer ${accessToken}`
+  //     },
+  //     json: true
+  // }
+
+  // Gets the top artist profile picture
     request.get(optionsArtistPic, function(error, response, body) {
       if (error) {
           console.log(error);
@@ -267,7 +307,29 @@ function getTopArtistPicture(accessToken) {
           topArtistPicURL.push(body.images[0].url);
       }
   });
+
+  // Gets the top artists' most recent album cover art
+  // request.get(optionsArtistAlbumPic, function(error, response, body) {
+  //   if (error) {
+  //     console.log(error);
+  // } else if (typeof body === 'undefined') {
+  //     console.log('Error: Invalid response body');
+  //     console.log(body);
+  // } else {
+  //     // Print the top artists
+  //     console.log(body);
+  //     topArtistPicURL.push(body.items[0].images[0].url);
+  // }
+  // });
 }
+
+/**
+ * Helper for the recommendedArtists function
+ *
+ * @param {str} accessToken Used to get the top artists
+ * @param {str} artistId Used to get the top artists' recommended artists
+ * @return {void}
+ */
 
 async function getArtistRecommendationsHelper(artistId, accessToken) {
   const options = {
@@ -301,6 +363,12 @@ async function getArtistRecommendationsHelper(artistId, accessToken) {
   });
 }
 
+/**
+ * Recommends a number of artists based on the user's top artist
+ *
+ * @param {str} accessToken 
+ * @return {void} fills up a stack with a user's top artist recommendations
+ */
 
 async function recommendArtists(accessToken) {
   // use the complete artists array, weight the recommendations by len - index/len (so the first artist is weighted more)
@@ -337,6 +405,12 @@ async function recommendArtists(accessToken) {
   }
 }
 
+/**
+ * Gets the tops songs a user listens to
+ *
+ * @param {str} accessToken Used to gain access to the Spotify API
+ * @return {void} fills up a stack with a user's top songs
+ */
 
 function getTopSongs(accessToken) {
   var topSongs = {
@@ -365,6 +439,13 @@ function getTopSongs(accessToken) {
       }
   });
 }
+
+/**
+ * Gets the tops genres a user listens to
+ *
+ * @param {str} accessToken Used to gain access to the Spotify API
+ * @return {void} fills up a stack with a user's top genres
+ */
 
 function getTopGenres(accessToken) {
   
