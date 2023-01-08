@@ -6,13 +6,18 @@ html
     link(rel="stylesheet" href="done.css")
   body
     h1.title=name + "'s Profile"
-    img(src= topArtistPicURL, style="display:none" crossOrigin="anonymous")#TopArtistPic
+    img(src= topArtistPicURL style="display:none" crossOrigin="anonymous")#TopArtistPic
     p(style="display:none")#nameData=name
     h2(style="display:none")#topArtistText= artists[0]
     .row.main
       .column.outputImage
         canvas(width="280" height="400" style="display:none")#outImage
         img#outImage2
+        .row
+          button#SMSShare Text
+          button#FBShare Facebook
+          button#InstaShare Insta
+          button#SnapShare Snap
       .column.otherArtist
         h2 Artists
         .row
@@ -82,8 +87,7 @@ html
       | <script src="PieChart.js" defer></script>
       | <script src="server.js" defer></script>
       | <script src="imgMaker.js" defer></script>
-    
+      | <script src="sharingManager.js" defer></script>
       | <script> window.addEventListener('resize', function () {window.location.reload();}) </script>
-
-
+      
 
