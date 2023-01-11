@@ -3,6 +3,8 @@ var request = require('request');
 var querystring = require('querystring');
 var path = require('path');
 const pug = require('pug');
+const {MongoClient} = require('mongodb');
+const { send } = require('process');
 
 const artist_count = 15;
 const rec_artist_count = 10;
@@ -18,6 +20,7 @@ var genreFreq = [];
 var basicScore = 0;
 var varietyScore = 0;
 const names = [];
+const userID = [];
 var outRecArtists = [];
 var topArtistPicURL = [];
 
@@ -121,7 +124,9 @@ app.get('/callback', (req, res) => {
           }
         });
         checkAll(100).then(() => {
-          res.redirect('/done');
+          sendData().then(() => {
+            res.redirect('/done');
+          });
         });
       });
 });
@@ -195,6 +200,7 @@ function getName(accessToken) {
     } else {
       // Print the name
       names.push(body.display_name)
+      userID.push(body.id)
     }
   });
 }
@@ -404,6 +410,44 @@ function getTopGenres(accessToken) {
 }
 }
 
+
+async function sendData() {
+  // send data to the MongoDB database
+  const DBuri = "mongodb+srv://<dbUserName>:<dbPassword>@<dbAddress>/?retryWrites=true&w=majority";
+  const DBclient = new MongoClient(DBuri);
+  try {
+    await DBclient.connect();
+    console.log("Connected to MongoDB");
+
+    // define the data to insert
+    const profileData = {
+      userID: userID[0],
+      topArtists: artists,
+      topSongs: songs,
+      topGenres: genres
+    };
+
+    // get the profiles collection
+    const profilesCollection = DBclient.db("spotifyApp").collection("profiles");
+
+    // check if the userID already exists
+    const userExist = await profilesCollection.findOne({userID: profileData.userID});
+    if(userExist){
+      // update the existing profile
+      await profilesCollection.updateOne({ userID: profileData.userID }, { $set: { topArtists: profileData.topArtists, topSongs: profileData.topSongs, topGenres: profileData.topGenres } });
+      console.log("Profile data updated");
+    } else {
+      // insert the new profile
+      await profilesCollection.insertOne(profileData);
+      console.log("Profile data inserted");
+    }
+
+  } catch (e) {
+    console.error(e);
+  } finally {
+    await DBclient.close();
+  }
+}
 
 // Establishes connection between code and web server
 app.listen(3000, () => {
