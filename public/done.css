@@ -46,6 +46,10 @@
     color: #fff; /* change the text color to white */
   }
   
+  #notNeededVisually{
+    display: none;
+  }
+
   .row {
     display: flex;
   }
