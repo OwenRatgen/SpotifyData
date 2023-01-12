@@ -246,7 +246,7 @@ function getTopArtists(accessToken) {
 function getTopArtistPicture(accessToken) {
     const topID = FullArtists[0].id;
     var optionsArtistPic = {
-        url: `https://api.spotify.com/v1/artists/${topID}/`,
+        url: `https://api.spotify.com/v1/artists/${topID}/albums`,
         headers: {
           'Authorization': `Bearer ${accessToken}`
         },
@@ -260,7 +260,7 @@ function getTopArtistPicture(accessToken) {
           console.log(body);
       } else {
           // Print the top artists
-          topArtistPicURL.push(body.images[0].url);
+          topArtistPicURL.push(body.items[0].images[0].url);
       }
   });
 }

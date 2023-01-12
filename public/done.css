@@ -1,11 +1,13 @@
 @media (prefers-color-scheme: dark) {
+
   body {
+    overflow-y: scroll;
     font-family: sans-serif;
     margin: 0;
     padding: 0;
     background-color: #222; /* change the background-color to a dark color */
     color: #fff; /* change the text color to white */
-    position: fixed;
+    position: absolute;
   }
   
   h1.title {
@@ -49,8 +51,20 @@
   
   /*Top Left */
   .outputImage {
-    height: 58vh;
-    width: 30.4vw;
+    background-image: url(vinyl-cover.png);
+    background-size: 350px;
+    height: 26vh;
+    width: 33vw;
+  }
+
+  .cover-art {
+    position: relative;
+    border: 2px solid;
+    top: 5px;
+    left: 40px;
+    width: 125px;
+    height: 125px;
+    background-size: 125px;
   }
   
   /*Bottom Left */
