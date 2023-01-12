@@ -20,11 +20,15 @@ html
           div(class='cover-art' style='background-image: url(' + topArtistPicURL + ');')
           img#outImage
           img#outImage2
+          #overlay.hidden
+            input#group-name(type="text" placeholder="Enter group name")
+            button#groupmake Create Group
           .row
-            //- button#SMSShare Text
-            //- button#FBShare Facebook
-            //- button#InstaShare Insta
-            //- button#SnapShare Snap
+            button#SMSShare Text
+            button#FBShare Facebook
+            button#InstaShare Insta
+            button#SnapShare Snap
+            button#groups(onClick="openOverlay()") Groups
         .column.otherArtist
           h2 Artists
           .row
@@ -92,9 +96,21 @@ html
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
       | <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
       | <script src="PieChart.js" defer></script>
-      | <script src="server.js" defer></script>
       | <script src="imgMaker.js" defer></script>
       | <script src="sharingManager.js" defer></script>
+      | <script src="groupManager.js"></script>
       | <script> window.addEventListener('resize', function () {window.location.reload();}) </script>
-      
 
+    script.
+      var groupsIsOn = false;
+      function openOverlay() {
+        if (groupsIsOn) {
+          document.getElementById("overlay").classList.add("hidden");
+          document.getElementById("outImage2").classList.remove("hidden");
+          groupsIsOn = false;
+        } else {
+          document.getElementById("overlay").classList.remove("hidden");
+          document.getElementById("outImage2").classList.add("hidden");
+          groupsIsOn = true;
+        }
+      }

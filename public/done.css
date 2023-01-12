@@ -1,15 +1,17 @@
 @media (prefers-color-scheme: dark) {
-
+  .hidden {
+    display: none;
+  }
+  
   body {
     overflow-y: auto;
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #222; /* change the background-color to a dark color */
-    color: #fff; /* change the text color to white */
-    position: relative;
+     font-family: sans-serif;
+     margin: 0;
+     padding: 0;
+     background-color: #222; /* change the background-color to a dark color */
+     color: #fff; /* change the text color to white */
+     position: relative;
   }
-
   .statsContainer {
     margin-top: 800px;
     position: relative;
@@ -76,8 +78,10 @@
     border-radius: 5px;
   }
   
-  /*Top Left */
-  .outputImage {
+   /*Top Left */
+   .outputImage {
+    height: 58vh;
+    width: 30.4vw;
     background-image: url(vinyl-cover.png);
     background-size: 350px;
     height: 26vh;
