@@ -8,7 +8,7 @@ const { send } = require('process');
 const bodyParser = require('body-parser');
 
 
-const DBuri = "YOUR OWN MONGODB URI";
+const DBuri = "mongodb+srv://dbAdmin:dbAdminGeneral@spotifyapp.2pplecj.mongodb.net/?retryWrites=true&w=majority";
 const DBclient = new MongoClient(DBuri);
 
 const artist_count = 15;
@@ -45,8 +45,8 @@ app.use(bodyParser.json());
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'YOUR_CLIENT'; // Your client id
-var client_secret = 'YOUR_SECRET'; // Your secret
+var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
+var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
 const standardDeviation = (arr, usePopulation = false) => {
@@ -218,6 +218,25 @@ app.post('/createGroup', async (req, res) => {
   } catch (e) {
       console.error(e);
       res.status(500).send({ message: 'Failed to create group', error: e });
+  } finally {
+      await DBclient.close();
+  }
+});
+
+app.post('/joinGroup', async (req, res) => {
+
+  try {
+      await DBclient.connect();
+      console.log("Connected to MongoDB");
+      // Get the groups collection
+      const groupsCollection = DBclient.db("spotifyApp").collection("groups");
+      // insert the new group into the collection
+      await groupsCollection.updateOne({ groupName: req.body.groupName }, { $push: {users: req.body.userID} });
+
+      console.log("User added to group");
+  } catch (e) {
+      console.error(e);
+      res.status(500).send({ message: 'Failed to join group', error: e });
   } finally {
       await DBclient.close();
   }
