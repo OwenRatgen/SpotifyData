@@ -5,6 +5,11 @@ var path = require('path');
 const pug = require('pug');
 const {MongoClient} = require('mongodb');
 const { send } = require('process');
+const bodyParser = require('body-parser');
+
+
+const DBuri = "YOUR OWN MONGODB URI";
+const DBclient = new MongoClient(DBuri);
 
 const artist_count = 15;
 const rec_artist_count = 10;
@@ -21,6 +26,7 @@ var basicScore = 0;
 var varietyScore = 0;
 const names = [];
 const userID = [];
+const groups = [];
 var outRecArtists = [];
 var topArtistPicURL = [];
 
@@ -34,12 +40,13 @@ const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules')));
+app.use(bodyParser.json());
 
 app.set('view engine', 'pug');
 app.set('views', './public');
 
-var client_id = 'c4f0958cbf0741fcaa7dc824e1aca38a'; // Your client id
-var client_secret = '872bdd743dcc4feda732e4f4deb5150c'; // Your secret
+var client_id = 'YOUR_CLIENT'; // Your client id
+var client_secret = 'YOUR_SECRET'; // Your secret
 var redirect_uri = 'http://localhost:3000/callback';
 
 const standardDeviation = (arr, usePopulation = false) => {
@@ -125,7 +132,9 @@ app.get('/callback', (req, res) => {
         });
         checkAll(100).then(() => {
           sendData().then(() => {
-            res.redirect('/done');
+            getGroups().then(() => {
+              res.redirect('/done');
+            });
           });
         });
       });
@@ -146,7 +155,7 @@ async function checkArtists(ms) {
 
 
 app.get('/done', (req, res) => {
-  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore});
+  res.render('done', {artists: artists, songs: songs, genres: genres, genreFreq: genreFreq, score: basicScore, name: names[0], recArtists: outRecArtists, topArtistPicURL: topArtistPicURL[0], varietyScore: varietyScore, groups: groups, userID: userID[0]});
 });
 
 app.get('/short', (req, res) => {
@@ -181,6 +190,37 @@ app.get('/long', (req, res) => {
     term = "long_term";
   }
   res.redirect('/login');
+});
+
+app.post('/createGroup', async (req, res) => {
+  try {
+      await DBclient.connect();
+      console.log("Connected to MongoDB");
+      // create the new group document
+      const newGroup = {
+          groupName: req.body.groupName,
+          users: [req.body.userID]
+      }
+      // Get the groups collection
+      const groupsCollection = DBclient.db("spotifyApp").collection("groups");
+      // insert the new group into the collection
+      await groupsCollection.insertOne(newGroup);
+      console.log("New group added to the database");
+      res.send({message: 'Group created successfully'});
+      //update the user's groups array
+      const profilesCollection = DBclient.db("spotifyApp").collection("profiles");
+      user =  await profilesCollection.findOne({userID: req.body.userID});
+      var groups = user.groups;
+      groups.push(req.body.groupName);
+      await profilesCollection.updateOne({ userID: req.body.userID }, { $set: {groups: groups} });
+
+
+  } catch (e) {
+      console.error(e);
+      res.status(500).send({ message: 'Failed to create group', error: e });
+  } finally {
+      await DBclient.close();
+  }
 });
 
 function getName(accessToken) {
@@ -246,7 +286,7 @@ function getTopArtists(accessToken) {
 function getTopArtistPicture(accessToken) {
     const topID = FullArtists[0].id;
     var optionsArtistPic = {
-        url: `https://api.spotify.com/v1/artists/${topID}/albums`,
+        url: `https://api.spotify.com/v1/artists/${topID}/`,
         headers: {
           'Authorization': `Bearer ${accessToken}`
         },
@@ -260,7 +300,7 @@ function getTopArtistPicture(accessToken) {
           console.log(body);
       } else {
           // Print the top artists
-          topArtistPicURL.push(body.items[0].images[0].url);
+          topArtistPicURL.push(body.images[0].url);
       }
   });
 }
@@ -413,18 +453,16 @@ function getTopGenres(accessToken) {
 
 async function sendData() {
   // send data to the MongoDB database
-  const DBuri = "mongodb+srv://<dbUserName>:<dbPassword>@<dbAddress>/?retryWrites=true&w=majority";
-  const DBclient = new MongoClient(DBuri);
   try {
     await DBclient.connect();
-    console.log("Connected to MongoDB");
 
     // define the data to insert
     const profileData = {
       userID: userID[0],
       topArtists: artists,
       topSongs: songs,
-      topGenres: genres
+      topGenres: genres,
+      groups: groups
     };
 
     // get the profiles collection
@@ -435,11 +473,9 @@ async function sendData() {
     if(userExist){
       // update the existing profile
       await profilesCollection.updateOne({ userID: profileData.userID }, { $set: { topArtists: profileData.topArtists, topSongs: profileData.topSongs, topGenres: profileData.topGenres } });
-      console.log("Profile data updated");
     } else {
       // insert the new profile
       await profilesCollection.insertOne(profileData);
-      console.log("Profile data inserted");
     }
 
   } catch (e) {
@@ -448,6 +484,30 @@ async function sendData() {
     await DBclient.close();
   }
 }
+
+async function getGroups() {
+  try {
+      await DBclient.connect();
+      console.log("Connected to MongoDB");
+      // Get the profiles collection
+      const profilesCollection = DBclient.db("spotifyApp").collection("profiles");
+      // Find the profile that match with userID
+      const profile = await profilesCollection.findOne({userID: userID[0]});
+      // update the group array with the group array from the profile
+      if (profile) {
+          for (var i = 0; i < profile.groups.length; i++) {
+            groups.push(profile.groups[i]);
+          }
+      } else {
+          console.log(`User ${userID} not found`);
+      }
+  } catch (e) {
+      console.error(e);
+  } finally {
+      await DBclient.close();
+  }
+}
+
 
 // Establishes connection between code and web server
 app.listen(3000, () => {
