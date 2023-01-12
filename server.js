@@ -226,21 +226,30 @@ app.post('/createGroup', async (req, res) => {
 app.post('/joinGroup', async (req, res) => {
 
   try {
-      await DBclient.connect();
-      console.log("Connected to MongoDB");
-      // Get the groups collection
-      const groupsCollection = DBclient.db("spotifyApp").collection("groups");
-      // insert the new group into the collection
-      await groupsCollection.updateOne({ groupName: req.body.groupName }, { $push: {users: req.body.userID} });
+    await DBclient.connect();
+    console.log("Connected to MongoDB");
+    // Get the groups collection
+    const groupsCollection = DBclient.db("spotifyApp").collection("groups");
+    // Check if user already exists in group
+    const group = await groupsCollection.findOne({ groupName: req.body.groupName, "users": req.body.userID });
+    if (group) {
+        console.log("User already in group");
+        res.status(400).send({ message: 'User already in group' });
+        return 
+    }
+    // insert the new group into the collection
+    await groupsCollection.updateOne({ groupName: req.body.groupName }, { $push: {users: req.body.userID} });
 
-      console.log("User added to group");
-  } catch (e) {
-      console.error(e);
-      res.status(500).send({ message: 'Failed to join group', error: e });
-  } finally {
-      await DBclient.close();
-  }
+    console.log("User added to group");
+    res.send({message: 'User added to group successfully'});
+} catch (e) {
+    console.error(e);
+    res.status(500).send({ message: 'Failed to join group', error: e });
+} finally {
+    await DBclient.close();
+}
 });
+
 
 function getName(accessToken) {
   var name = {
