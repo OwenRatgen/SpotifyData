@@ -5,83 +5,88 @@ html
     title=name + "'s Profile"
     link(rel="stylesheet" href="done.css")
   body
-    h1.title=name + "'s Profile"
-    p(style="display:none")#nameData=name
-    img(src= topArtistPicURL style="display:none" crossOrigin="anonymous")#TopArtistPic
-    h2(style="display:none")#topArtistText= artists[0]
-    .row.main
-      .column.outputImage
-        //- img(src='vinyl-cover.png' style="width:100%;")
-        div(class='cover-art' style='background-image: url(' + topArtistPicURL + ');')
-        img#outImage
-        img#outImage2
-        .row
-          //- button#SMSShare Text
-          //- button#FBShare Facebook
-          //- button#InstaShare Insta
-          //- button#SnapShare Snap
-      .column.otherArtist
-        h2 Artists
-        .row
-          .column
-            ul.artists#artistNamesA
-              each artist,element in artists
-                if element != 0
-                  if element < artists.length/2
-                    li= artist
-          .column
-            ul.artists#artistNamesB
-              each artist,element in artists
+    div(class='vinylContainer')
+      div(class='albumCover' style='background-image: url(' + topArtistPicURL + ');')
+        //- div(class='artistsContainer') ARTISTS GO HERE
+        //- div(class='songsContainer') SONGS GO HERE
+    div(class='statsContainer')
+      h1.title=name + "'s Profile"
+      p(style="display:none")#nameData=name
+      img(src= topArtistPicURL style="display:none" crossOrigin="anonymous")#TopArtistPic
+      h2(style="display:none")#topArtistText= artists[0]
+      .row.main
+        .column.outputImage
+          //- img(src='vinyl-cover.png' style="width:100%;")
+          div(class='cover-art' style='background-image: url(' + topArtistPicURL + ');')
+          img#outImage
+          img#outImage2
+          .row
+            //- button#SMSShare Text
+            //- button#FBShare Facebook
+            //- button#InstaShare Insta
+            //- button#SnapShare Snap
+        .column.otherArtist
+          h2 Artists
+          .row
+            .column
+              ul.artists#artistNamesA
+                each artist,element in artists
                   if element != 0
-                    if element >= artists.length/2
+                    if element < artists.length/2
                       li= artist
-      .column.genres
-        h2 Your Top Genres
-        div#pie_chart_label
-          p Genre Breakdown
-        div#pie_chart_container
-          ul#genres
-            each genre in genres
-              li= genre
-          ul#genreFreq 
-            each freq in genreFreq
-              li= freq
+            .column
+              ul.artists#artistNamesB
+                each artist,element in artists
+                    if element != 0
+                      if element >= artists.length/2
+                        li= artist
+        .column.genres
+          h2 Your Top Genres
+          div#pie_chart_label
+            p Genre Breakdown
+          div#pie_chart_container
+            ul#genres
+              each genre in genres
+                li= genre
+            ul#genreFreq 
+              each freq in genreFreq
+                li= freq
+        
+      .row.main
+        .column.score
+          h2 Scores
+          .row
+            .column
+              h3= '"Basic" Score: '+score
+              p.details A higher score means you have a more "basic" music taste.
+            .column
+              h3= 'Variety Score: '+varietyScore
+              p.details A higher score means you have a more varied music taste.
+        .column.songs
+          h2 Songs
+          .row
+            .column
+              ul
+                each song,element in songs
+                  if element < songs.length/2
+                    li.song= song
+            .column
+              ul
+                each song,element in songs
+                  if element >= songs.length/2
+                    li.song= song
+        .column
+          h2 Recommended Artists (Placeholder)
+          ul
+            each artist in recArtists
+              li= artist
+        .column.button-column
+          h2 Time Frame
+          .btn-container
+            a.btn(href='/short' id='last_month') Last Month
+            a.btn(href='/medium' id='last_six') Last 6 Months
+            a.btn(href='/long' id='all_time') All Time
       
-    .row.main
-      .column.score
-        h2 Scores
-        .row
-          .column
-            h3= '"Basic" Score: '+score
-            p.details A higher score means you have a more "basic" music taste.
-          .column
-            h3= 'Variety Score: '+varietyScore
-            p.details A higher score means you have a more varied music taste.
-      .column.songs
-        h2 Songs
-        .row
-          .column
-            ul
-              each song,element in songs
-                if element < songs.length/2
-                  li.song= song
-          .column
-            ul
-              each song,element in songs
-                if element >= songs.length/2
-                  li.song= song
-      .column
-        h2 Recommended Artists (Placeholder)
-        ul
-          each artist in recArtists
-            li= artist
-      .column.button-column
-        h2 Time Frame
-        .btn-container
-          a.btn(href='/short' id='last_month') Last Month
-          a.btn(href='/medium' id='last_six') Last 6 Months
-          a.btn(href='/long' id='all_time') All Time
-    
     pre
 
       | <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>

@@ -1,13 +1,40 @@
 @media (prefers-color-scheme: dark) {
 
   body {
-    overflow-y: scroll;
+    overflow-y: auto;
     font-family: sans-serif;
     margin: 0;
     padding: 0;
     background-color: #222; /* change the background-color to a dark color */
     color: #fff; /* change the text color to white */
-    position: absolute;
+    position: relative;
+  }
+
+  .statsContainer {
+    margin-top: 800px;
+    position: relative;
+  }
+
+  .vinylContainer {
+    position: relative;
+    left: 360px;
+    top: 150px;
+    width: 700px;
+    height: 500px;
+    border: 2px solid;
+    border-color: white;
+    background-image: url(vinyl-cover.png);
+    background-size: 700px;
+  }
+
+  .albumCover {
+    position: relative;
+    border: 2px solid;
+    top: 50px;
+    left: 125px;
+    width: 210px;
+    height: 210px;
+    background-size: 210px;
   }
   
   h1.title {
@@ -101,7 +128,7 @@
   }
   
   #pie_chart_container {
-    width: 100%;
+    width: 25%;
     position: absolute;
     left: 73vw;
     top: 22vh;
