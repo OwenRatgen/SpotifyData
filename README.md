@@ -3,7 +3,7 @@ Pulls Data from a user's Spotify account to find their most popular songs and al
 Additionally, it calculates their favorite genres from the artist data, and recommends similar artists.
 
 ## Steps
-1. git fork the repository
+1. Fork the repository
 2. Run `git clone <github link>` in your terminal
 3. Create new branch with your name then Branch (example: OwenBranch)
 4. Install npm and Node.js ([https://nodejs.org/en/download](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
